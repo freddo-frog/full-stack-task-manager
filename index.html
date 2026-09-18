@@ -1,0 +1,85 @@
+<script>
+    async function load_tasks() {
+        const response = await fetch("http://127.0.0.1:8000/view-tasks") //fetches data from URL
+
+        const data = await response.json()
+        renderTasks(data)
+    }
+
+    function renderTasks(data) {
+        const tbody = document.getElementById("task-body")
+        tbody.innerHTML = "" // clear out old rows before drawing the new ones
+
+        for (const row of data) {
+            const id = row[0]
+            const task = row[1]
+            const completed = row[2]
+            const due_date = row[3]
+            const created_at = row[5] // index 4 (priority) is skipped on purpose
+
+            const tr = document.createElement("tr")
+            tr.dataset.id = id // hidden id, kept for later delete/complete buttons
+
+            const taskCell = document.createElement("td")
+            taskCell.textContent = task
+            tr.appendChild(taskCell)
+
+            const completedCell = document.createElement("td")
+            completedCell.textContent = completed ? "Yes" : "No"
+            tr.appendChild(completedCell)
+
+            const dueDateCell = document.createElement("td")
+            dueDateCell.textContent = due_date
+            tr.appendChild(dueDateCell)
+
+            const createdAtCell = document.createElement("td")
+            createdAtCell.textContent = created_at
+            tr.appendChild(createdAtCell)
+
+            tbody.appendChild(tr)
+        }
+    }
+
+    async function handleAddTask(event) {
+        event.preventDefault() // stop the browser from doing a full page reload on submit
+
+        const form = event.target
+        const task = form.task.value
+        const due_date = form.due_date.value
+        const created_at = new Date().toISOString()
+
+        await fetch("http://127.0.0.1:8000/add-task", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ task, due_date, created_at })
+        })
+
+        form.reset()
+        load_tasks() // redraw the table so the new task shows up
+    }
+
+    function init() {
+        document.getElementById("add-task-form").addEventListener("submit", handleAddTask)
+        load_tasks()
+    }
+
+    document.addEventListener("DOMContentLoaded", init)
+</script>
+
+<form id="add-task-form">
+    <input type="text" name="task" placeholder="Task" required>
+    <input type="date" name="due_date">
+    <button type="submit">Add Task</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Completed</th>
+            <th>Due Date</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody id="task-body"></tbody>
+</table>
