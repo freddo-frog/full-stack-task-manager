@@ -36,6 +36,15 @@
             createdAtCell.textContent = created_at
             tr.appendChild(createdAtCell)
 
+            const actionsCell = document.createElement("td")
+            if (!completed) {
+                const completeBtn = document.createElement("button")
+                completeBtn.textContent = "Complete"
+                completeBtn.addEventListener("click", () => handleComplete(id))
+                actionsCell.appendChild(completeBtn)
+            }
+            tr.appendChild(actionsCell)
+
             tbody.appendChild(tr)
         }
     }
@@ -56,6 +65,14 @@
 
         form.reset()
         load_tasks() // redraw the table so the new task shows up
+    }
+
+    async function handleComplete(id) {
+        await fetch(`http://127.0.0.1:8000/complete-task/${id}`, {
+            method: "PATCH"
+        })
+
+        load_tasks() // redraw the table so the row reflects completed status
     }
 
     function init() {
@@ -79,6 +96,7 @@
             <th>Completed</th>
             <th>Due Date</th>
             <th>Created At</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody id="task-body"></tbody>
