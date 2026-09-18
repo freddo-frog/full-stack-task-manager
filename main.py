@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
+from typing import Literal
 
 DB_NAME = "tasks.db"
 
@@ -39,7 +40,7 @@ class Task(BaseModel):
     task: str
     due_date: str
     created_at: str
-    priority: int | None = None
+    priority: Literal[1,2,3]
     category: str | None = None
 
 @app.get("/view-tasks")
