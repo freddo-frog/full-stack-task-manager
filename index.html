@@ -43,6 +43,12 @@
                 completeBtn.addEventListener("click", () => handleComplete(id))
                 actionsCell.appendChild(completeBtn)
             }
+
+            const deleteBtn = document.createElement("button")
+            deleteBtn.textContent = "Delete"
+            deleteBtn.addEventListener("click", () => handleDelete(id))
+            actionsCell.appendChild(deleteBtn)
+
             tr.appendChild(actionsCell)
 
             tbody.appendChild(tr)
@@ -73,6 +79,14 @@
         })
 
         load_tasks() // redraw the table so the row reflects completed status
+    }
+
+    async function handleDelete(id) {
+        await fetch(`http://127.0.0.1:8000/delete-task/${id}`, {
+            method: "DELETE"
+        })
+
+        load_tasks() // redraw the table so the row disappears
     }
 
     function init() {
