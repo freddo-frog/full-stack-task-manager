@@ -6,6 +6,17 @@
         renderTasks(data)
     }
 
+    function formatDateTime(isoString) {
+        const date = new Date(isoString)
+        return date.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        })
+    }
+
     function renderTasks(data) {
         const tbody = document.getElementById("task-body")
         tbody.innerHTML = "" // clear out old rows before drawing the new ones
@@ -33,7 +44,7 @@
             tr.appendChild(dueDateCell)
 
             const createdAtCell = document.createElement("td")
-            createdAtCell.textContent = created_at
+            createdAtCell.textContent = formatDateTime(created_at)
             tr.appendChild(createdAtCell)
 
             const actionsCell = document.createElement("td")
